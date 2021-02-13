@@ -1,0 +1,33 @@
+---
+- hosts: nfs, sys
+  tasks:
+          - name: Installation de nfs
+            yum: # <-- le module utilisé
+                    name: nfs-utils # <-- le nom de l'instalation
+                    state: latest # <-- état le pus récent
+          - name: Démarrage du service nfs
+            service: # <-- le module utilisé
+                    name: nfs-server # <-- le nom du service
+                    state: started # <--  état de démarrage
+                    enabled: yes # <-- activation au démarrage
+- hosts: nfs
+  tasks:
+          - name: Permettre l'accès au répertoire home # <-- envoie d'une version appropriée du fichier de configuration nfs vers celui du serveur quelque soit sa modification 
+            template: # le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/exports # <-- source de l'envoi du fichier de configuration nfs
+                    dest: /etc/exports # <-- destination de l'envoi de ce dernier
+            notify: # <-- le module utilisé
+                    - save nfs # <-- le nom de l'action après la tâche
+  handlers:
+          - name: save nfs # <-- le nom de l'action 
+            command: exportfs -a # <-- la commande 
+- hosts: sys
+  tasks:  
+          - name: Montage du répertoire home
+            mount: # <-- le module utilisé
+                    path: /mnt/home # le chemin où monter
+                    src: "[FC00::0F2A]:/home" # <-- la source du montage
+                    fstype: nfs # <-- le type de montage permanent sur le fichier fstab
+                    opts: defaults # <-- les options du montage
+                    state: mounted # <-- état monté               
+...

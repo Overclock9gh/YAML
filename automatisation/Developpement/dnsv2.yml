@@ -1,0 +1,19 @@
+---
+- hosts: dns
+  tasks:
+          - name: Installation de Bind 9
+            yum: # <-- le module utilisé
+                    name: # <-- noms de l'installation 
+                        - bind
+                        - bind-utils
+                    state: latest # <-- état le plus récent
+          - name: Envoie du template dns # <-- envoie d'une version appropriée du fichier de configuration dns vers celui du serveur quel que soit sa modification  
+            template: # <-- le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/named.conf # <-- source de l'envoie du fichier de configuration dns
+                    dest: /etc/named.conf # <-- destination de l'envoie de ce dernier
+          - name: Démarrage du service named
+            service: # <-- le module utilisé
+                    name: named # <-- service dns named
+                    state: started # <-- état démarré
+                    enabled: yes # <-- activation au démarrage 
+...

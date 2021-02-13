@@ -1,0 +1,32 @@
+---
+- hosts: all 
+  tasks:
+          - name: Installation de rsyslog
+            yum: # <-- le module utilisé
+                    name: rsyslog # <-- nom de l'installation
+                    state: latest # <-- état le plus récent 
+- hosts: sys
+  tasks:
+          - name: Permettre les logs du protocol UDP et TCP # <-- envoie d'une version appropriée du fichier de configuration syslog vers celui du serveur quelque soit sa modification       
+            template: # <-- le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/rsyslog_sys.conf # <-- source de l'envoie du fichier de configuration du serveur syslog
+                    dest: /etc/rsyslog.conf # <-- destination de l'envoie de celui-ci
+          - name: Démarrage du service rsyslog
+            service: # <-- le module utilisé
+                    name: rsyslog # <-- service syslog
+                    state: started # <-- état démarré
+                    enabled: yes # <-- activation au démarrage
+- hosts: nfs, dns
+  tasks:
+          - name: Pointer les clients # <-- envoie d'une version appropriée du fichier de configuration syslog vers celui des clients quelque soit sa modification 
+            template: # <-- le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/rsyslog_nfs_dns.conf # <-- source de l'envoie du fichier de configuration du client syslog
+                    dest: /etc/rsyslog.conf # <-- destination de l'envoie du fichier
+            notify: # <-- le module utilisé
+                    - restart sys # <-- le nom du notify
+  handlers:
+          - name: restart sys
+            service: # <-- le module utilisé
+                    name: rsyslog # <-- nom du service
+                    state: restarted # <-- état de redémarrage 
+...

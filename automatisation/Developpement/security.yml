@@ -1,0 +1,12 @@
+---
+- hosts: all
+  tasks:   
+          - name: Désactivation de selinux 
+            selinux: # <-- le module utilisé
+                    state: disabled # <-- état désactivé
+          - name: Désactivation du firewall
+            service: # <-- le module utilisé
+                    name: firewalld # <-- le service firewall
+                    state: stopped # <-- état stoppé
+                    enabled: no # <-- pas d'activation au démarrage 
+...

@@ -1,0 +1,26 @@
+---
+- hosts: dns
+  tasks:
+          - name: Configuration ipv6 serveur dns # <-- envoie d'une version appropriée du fichier de configuration ip vers celui des machines quelque soit sa modification 
+            template: # <-- le module utilisé 
+                    src: /home/hsaid/Bureau/TP1/Template/ifcfg-ens33_dns # <-- la source de l'envoie du fichier de configuration ip
+                    dest: /etc/sysconfig/network-scripts/ifcfg-ens33 # <-- la destination de l'envoie de celui-ci  
+- hosts: sys
+  tasks:
+          - name: Configuration ipv6 serveur dns # <-- envoie d'une version appropriée du fichier de configuration ip vers celui des machines quelque soit sa modification 
+            template: # <-- le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/ifcfg-ens33_sys # <-- la source de l'envoie du fichier de configuration ip
+                    dest: /etc/sysconfig/network-scripts/ifcfg-ens33 # <-- la destination de l'envoie de celui-ci 
+
+- hosts: nfs
+  tasks:
+         - name: Configuration ipv6 serveur dns # <-- envoie d'une version appropriée du fichier de configuration ip vers celui des machines quelque soit sa modification 
+           template: # <-- le module utilisé
+                    src: /home/hsaid/Bureau/TP1/Template/ifcfg-ens33_nfs # <-- la source de l'envoie du fichier de configuration ip
+                    dest: /etc/sysconfig/network-scripts/ifcfg-ens33 # <-- la destination de l'envoie de celui-ci 
+
+- hosts: all
+  tasks:
+          - name: Redémarrage du réseau
+            shell: "ifdown ens33 && ifup ens33" # <-- redémarrage de l'interface réseau
+...
